@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.cleilsonandrade.parkapi.entity.User;
+import br.cleilsonandrade.parkapi.exception.UsernameUniqueViolationException;
 import br.cleilsonandrade.parkapi.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,12 +19,17 @@ public class UserService {
 
   @Transactional
   public User save(User user) {
-    return this.userRepository.save(user);
+    try {
+      return this.userRepository.save(user);
+    } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+      throw new UsernameUniqueViolationException(String.format("Username '%s' already registered", user.getUsername()));
+    }
   }
 
   @Transactional(readOnly = true)
   public User getById(Long id) {
-    return this.userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    return this.userRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(String.format("User id=%s not found", id)));
   }
 
   @Transactional

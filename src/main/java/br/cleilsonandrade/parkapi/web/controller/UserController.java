@@ -18,14 +18,19 @@ import br.cleilsonandrade.parkapi.web.dto.UserCreateDTO;
 import br.cleilsonandrade.parkapi.web.dto.UserPassDTO;
 import br.cleilsonandrade.parkapi.web.dto.UserResponseDTO;
 import br.cleilsonandrade.parkapi.web.dto.mapper.UserMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Users", description = "Contains all operations related to resources for registering, editing and reading a user")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("usuarios")
+@RequestMapping("users")
 public class UserController {
   private final UserService userService;
+
+  @Operation(summary="Criar um novo usuário",description="Recurso para criar um novo usuário",responses={@ApiResponse(responseCode="201",description="Recurso criado com sucesso",content=@Content(mediaType="application/json",schema=@Schema(implementation=UserResponseDTO.class))
+  })
 
   @PostMapping
   public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
