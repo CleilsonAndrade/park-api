@@ -1,5 +1,7 @@
 package br.cleilsonandrade.parkapi.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,27 @@ public class UserService {
     User user = getById(id);
     user.setPassword(password);
     return user;
+  }
+
+  public User editPassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
+    if (!newPassword.equals(confirmPassword)) {
+      throw new RuntimeException("New password is not the same as confirmation");
+    }
+
+    User findUser = getById(id);
+
+    if (!findUser.getPassword().equals(currentPassword)) {
+      throw new RuntimeException("The password entered does not match the registered one");
+    }
+
+    findUser.setPassword(confirmPassword);
+
+    return findUser;
+  }
+
+  @Transactional(readOnly = true)
+  public List<User> getAll() {
+    return this.userRepository.findAll();
   }
 
 }

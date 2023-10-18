@@ -1,5 +1,7 @@
 package br.cleilsonandrade.parkapi.web.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import br.cleilsonandrade.parkapi.entity.User;
 import br.cleilsonandrade.parkapi.service.UserService;
 import br.cleilsonandrade.parkapi.web.dto.UserCreateDTO;
+import br.cleilsonandrade.parkapi.web.dto.UserPassDTO;
+import br.cleilsonandrade.parkapi.web.dto.UserResponseDTO;
+import br.cleilsonandrade.parkapi.web.dto.mapper.UserMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,20 +28,27 @@ public class UserController {
   private final UserService userService;
 
   @PostMapping
-  public ResponseEntity<User> create(@RequestBody UserCreateDTO createDTO) {
-    User newUser = userService.save(createDTO);
-    return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+  public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+    User newUser = this.userService.save(UserMapper.toUser(userCreateDTO));
+    return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDTO(newUser));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<User> getById(@PathVariable Long id) {
-    User user = userService.getById(id);
-    return ResponseEntity.status(HttpStatus.OK).body(user);
+  public ResponseEntity<UserResponseDTO> getById(@PathVariable Long id) {
+    User user = this.userService.getById(id);
+    return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toDTO(user));
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<User> updatedPassword(@PathVariable Long id, @RequestBody User user) {
-    User findUser = userService.getById(id);
-    return ResponseEntity.status(HttpStatus.OK).body(findUser);
+  public ResponseEntity<Void> updatedPassword(@PathVariable Long id, @Valid @RequestBody UserPassDTO userPassDTO) {
+    this.userService.editPassword(id, userPassDTO.getCurrentPassword(), userPassDTO.getNewPassword(),
+        userPassDTO.getConfirmPassword());
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+  }
+
+  @GetMapping
+  public ResponseEntity<List<UserResponseDTO>> getAll() {
+    List<User> users = this.userService.getAll();
+    return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toListDTO(users));
   }
 }
