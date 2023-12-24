@@ -8,7 +8,7 @@
 		<version>3.2.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>br.cleilsonandrade</groupId>
+	<groupId>br.com.cleilsonandrade</groupId>
 	<artifactId>park-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>park-api</name>
