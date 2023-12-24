@@ -193,4 +193,46 @@ public class UserIT {
     org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
   }
+
+  @Test
+  public void updatePassword_WithDataInvalid_ReturnErrorMessageWithStatus422() {
+    ErrorMessage responseBody = testClient
+        .patch()
+        .uri("/users/100")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("", "", ""))
+        .exchange()
+        .expectStatus().isEqualTo(422)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+    responseBody = testClient
+        .patch()
+        .uri("/users/100")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("12345", "12345", "12345"))
+        .exchange()
+        .expectStatus().isEqualTo(422)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+    responseBody = testClient
+        .patch()
+        .uri("/users/100")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("12345678", "12345678", "12345678"))
+        .exchange()
+        .expectStatus().isEqualTo(422)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+  }
 }
