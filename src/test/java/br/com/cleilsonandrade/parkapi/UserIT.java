@@ -235,4 +235,33 @@ public class UserIT {
     org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
   }
+
+  @Test
+  public void updatePassword_WithPassInvalid_ReturnErrorMessageWithStatus400() {
+    ErrorMessage responseBody = testClient
+        .patch()
+        .uri("/users/100")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("123456", "123456", "000000"))
+        .exchange()
+        .expectStatus().isEqualTo(400)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
+
+    responseBody = testClient
+        .patch()
+        .uri("/users/100")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("000000", "12345", "12345"))
+        .exchange()
+        .expectStatus().isEqualTo(400)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
+  }
 }
