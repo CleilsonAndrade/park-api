@@ -135,4 +135,20 @@ public class UserIT {
     org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
   }
+
+  @Test
+  public void findUser_IdUserExisting_ReturnUserWithStatus200() {
+    UserResponseDTO responseBody = testClient
+        .get()
+        .uri("/users/100")
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(UserResponseDTO.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(100);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getUsername()).isEqualTo("ana@email.com");
+    org.assertj.core.api.Assertions.assertThat(responseBody.getRole()).isEqualTo("ADMIN");
+  }
 }
