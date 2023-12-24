@@ -37,7 +37,7 @@ public class UserIT {
   }
 
   @Test
-  public void createUser_WithUsernameInvalid_ReturnErrorMessageWithStatus201() {
+  public void createUser_WithUsernameInvalid_ReturnErrorMessageWithStatus422() {
     ErrorMessage responseBody = testClient
         .post()
         .uri("/users")
@@ -79,7 +79,7 @@ public class UserIT {
   }
 
   @Test
-  public void createUser_WithPasswordInvalid_ReturnErrorMessageWithStatus201() {
+  public void createUser_WithPasswordInvalid_ReturnErrorMessageWithStatus422() {
     ErrorMessage responseBody = testClient
         .post()
         .uri("/users")
@@ -118,5 +118,21 @@ public class UserIT {
 
     org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+  }
+
+  @Test
+  public void createUser_WithUsernameExisting_ReturnErrorMessageWithStatus409() {
+    ErrorMessage responseBody = testClient
+        .post()
+        .uri("/users")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserCreateDTO("ana@email.com", "123456"))
+        .exchange()
+        .expectStatus().isEqualTo(409)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
   }
 }
