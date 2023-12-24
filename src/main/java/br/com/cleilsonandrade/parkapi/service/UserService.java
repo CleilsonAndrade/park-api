@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.cleilsonandrade.parkapi.entity.User;
+import br.com.cleilsonandrade.parkapi.entity.User.Role;
 import br.com.cleilsonandrade.parkapi.exception.UsernameUniqueViolationException;
 import br.com.cleilsonandrade.parkapi.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -58,6 +59,17 @@ public class UserService {
   @Transactional(readOnly = true)
   public List<User> getAll() {
     return this.userRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
+  public User searchByUsername(String username) {
+    return userRepository.findByUsername(username)
+        .orElseThrow(() -> new EntityNotFoundException(String.format("User %s not found", username)));
+  }
+
+  @Transactional(readOnly = true)
+  public Role searchRoleByUsername(String username) {
+    return userRepository.findRoleByUsername(username);
   }
 
 }
