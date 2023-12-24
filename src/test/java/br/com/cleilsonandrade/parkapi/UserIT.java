@@ -151,4 +151,18 @@ public class UserIT {
     org.assertj.core.api.Assertions.assertThat(responseBody.getUsername()).isEqualTo("ana@email.com");
     org.assertj.core.api.Assertions.assertThat(responseBody.getRole()).isEqualTo("ADMIN");
   }
+
+  @Test
+  public void findUser_IdUserNonexistent_ReturnErrorMessageWithStatus404() {
+    ErrorMessage responseBody = testClient
+        .get()
+        .uri("/users/0")
+        .exchange()
+        .expectStatus().isNotFound()
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+  }
 }
