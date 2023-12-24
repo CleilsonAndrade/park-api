@@ -37,12 +37,6 @@ public class UserService {
   }
 
   @Transactional
-  public User editPassword(Long id, String password) {
-    User user = getById(id);
-    user.setPassword(password);
-    return user;
-  }
-
   public User editPassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
     if (!newPassword.equals(confirmPassword)) {
       throw new RuntimeException("New password is not the same as confirmation");
@@ -50,11 +44,11 @@ public class UserService {
 
     User findUser = getById(id);
 
-    if (!findUser.getPassword().equals(currentPassword)) {
+    if (!passwordEncoder.matches(currentPassword, findUser.getPassword())) {
       throw new RuntimeException("The password entered does not match the registered one");
     }
 
-    findUser.setPassword(confirmPassword);
+    findUser.setPassword(passwordEncoder.encode(newPassword));
 
     return findUser;
   }
