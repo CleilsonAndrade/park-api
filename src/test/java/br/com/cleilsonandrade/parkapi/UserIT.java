@@ -8,6 +8,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import br.com.cleilsonandrade.parkapi.web.dto.UserCreateDTO;
+import br.com.cleilsonandrade.parkapi.web.dto.UserPassDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.UserResponseDTO;
 import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
 
@@ -164,5 +165,16 @@ public class UserIT {
 
     org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+  }
+
+  @Test
+  public void updatePassword_WithDataValid_ReturnWithStatus204() {
+    testClient
+        .patch()
+        .uri("/users/100")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("123456", "123456", "123456"))
+        .exchange()
+        .expectStatus().isNoContent();
   }
 }
