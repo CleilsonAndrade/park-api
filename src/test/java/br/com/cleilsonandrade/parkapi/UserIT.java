@@ -177,4 +177,20 @@ public class UserIT {
         .exchange()
         .expectStatus().isNoContent();
   }
+
+  @Test
+  public void updatePassword_IdUserNonexistent_ReturnErrorMessageWithStatus404() {
+    ErrorMessage responseBody = testClient
+        .patch()
+        .uri("/users/0")
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("123456", "123456", "123456"))
+        .exchange()
+        .expectStatus().isNotFound()
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+  }
 }
