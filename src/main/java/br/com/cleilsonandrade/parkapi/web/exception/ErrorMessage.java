@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.ToString;
@@ -36,6 +37,12 @@ public class ErrorMessage {
     this.statusText = status.getReasonPhrase();
     this.message = message;
     addErrors(result);
+  }
+
+  public ErrorMessage(HttpServlet request, HttpStatus status, String message) {
+    this.method = request.getServletInfo();
+    this.status = status.value();
+    this.message = message;
   }
 
   private void addErrors(BindingResult result) {
