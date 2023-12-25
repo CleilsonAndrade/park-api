@@ -66,6 +66,7 @@ public class UserController {
       @ApiResponse(responseCode = "422", description = "Invalid or poorly formatted fields", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
   @PatchMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT') AND (#id == authentication.principal.id)")
   public ResponseEntity<Void> updatedPassword(@PathVariable Long id, @Valid @RequestBody UserPassDTO userPassDTO) {
     this.userService.editPassword(id, userPassDTO.getCurrentPassword(), userPassDTO.getNewPassword(),
         userPassDTO.getConfirmPassword());
