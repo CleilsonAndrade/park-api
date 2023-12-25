@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,12 +14,13 @@ import br.com.cleilsonandrade.parkapi.jwt.JwtToken;
 import br.com.cleilsonandrade.parkapi.jwt.JwtUserDetailsService;
 import br.com.cleilsonandrade.parkapi.web.dto.UserLoginDTO;
 import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Tag(name = "Authentication", description = "Contains all operations related to resources for authentication")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
