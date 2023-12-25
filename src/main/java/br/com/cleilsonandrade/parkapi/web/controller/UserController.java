@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Users", description = "Contains all operations related to resources for registering, editing and reading a user")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("users")
+@RequestMapping("/users")
 public class UserController {
   private final UserService userService;
 
@@ -47,9 +48,9 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDTO(newUser));
   }
 
-  @Operation(summary = "Retrieve a user by ID", description = "Feature to retrieve a user by ID", responses = {
+  @Operation(summary = "Retrieve a user by ID", description = "Feature to retrieve a user by ID", security = @SecurityRequirement(name = "security"), responses = {
       @ApiResponse(responseCode = "200", description = "Resource retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
-
+      @ApiResponse(responseCode = "403", description = "User without permission to access this resource", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
   @GetMapping("/{id}")
@@ -59,12 +60,14 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toDTO(user));
   }
 
-  @Operation(summary = "Update password", description = "Feature to update password", responses = {
+  @Operation(summary = "Update password", description = "Feature to update password", security = @SecurityRequirement(name = "security"), responses = {
       @ApiResponse(responseCode = "204", description = "Password updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
       @ApiResponse(responseCode = "400", description = "Password does not match", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      @ApiResponse(responseCode = "403", description = "User without permission to access this resource", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "422", description = "Invalid or poorly formatted fields", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
+
   @PatchMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT') AND (#id == authentication.principal.id)")
   public ResponseEntity<Void> updatedPassword(@PathVariable Long id, @Valid @RequestBody UserPassDTO userPassDTO) {
@@ -73,8 +76,9 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
-  @Operation(summary = "List all users", description = "Feature to list all registered users", responses = {
+  @Operation(summary = "List all users", security = @SecurityRequirement(name = "security"), description = "Feature to list all registered users", responses = {
       @ApiResponse(responseCode = "200", description = "List of all registered users", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserResponseDTO.class)))),
+      @ApiResponse(responseCode = "403", description = "User without permission to access this resource", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
