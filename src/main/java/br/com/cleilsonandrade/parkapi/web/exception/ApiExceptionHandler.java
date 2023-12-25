@@ -1,5 +1,7 @@
 package br.com.cleilsonandrade.parkapi.web.exception;
 
+import java.nio.file.AccessDeniedException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,15 @@ public class ApiExceptionHandler {
     log.error("Api Error: ", ex);
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON)
+        .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage(), null));
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<ErrorMessage> accessDeniedException(RuntimeException ex,
+      HttpServletRequest request) {
+    log.error("Api Error: ", ex);
+
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).contentType(MediaType.APPLICATION_JSON)
         .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage(), null));
   }
 
