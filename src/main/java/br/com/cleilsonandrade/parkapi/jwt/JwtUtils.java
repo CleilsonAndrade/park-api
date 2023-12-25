@@ -21,7 +21,7 @@ public class JwtUtils {
 
   public static final long EXPIRES_DAYS = 0;
   public static final long EXPIRES_HOURS = 0;
-  public static final long EXPIRES_MINUTES = 2;
+  public static final long EXPIRES_MINUTES = 30;
 
   private JwtUtils() {
   }
