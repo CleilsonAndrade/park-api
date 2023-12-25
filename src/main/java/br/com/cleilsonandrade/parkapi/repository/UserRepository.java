@@ -12,7 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<User> findByUsername(String username);
 
-  @Query("SELECT u.role FROM tb_user u WHERE u.username LIKE :username")
+  @Query("SELECT u.role FROM User u WHERE u.username LIKE :username")
   Role findRoleByUsername(String username);
 
 }
