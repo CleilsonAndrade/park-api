@@ -77,6 +77,7 @@ public class UserController {
       @ApiResponse(responseCode = "200", description = "List of all registered users", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = UserResponseDTO.class)))),
   })
   @GetMapping
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<List<UserResponseDTO>> getAll() {
     List<User> users = this.userService.getAll();
     return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toListDTO(users));
