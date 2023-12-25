@@ -53,7 +53,7 @@ public class UserController {
       @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
   @GetMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN') OR (hasRole('CLIENT') AND #id == authentication.principal.id)")
   public ResponseEntity<UserResponseDTO> getById(@PathVariable Long id) {
     User user = this.userService.getById(id);
     return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toDTO(user));
