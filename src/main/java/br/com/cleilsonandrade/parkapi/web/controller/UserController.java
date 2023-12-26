@@ -61,10 +61,9 @@ public class UserController {
   }
 
   @Operation(summary = "Update password", description = "Feature to update password, restricted access to 'ADMIN' or 'CLIENT'", security = @SecurityRequirement(name = "security"), responses = {
-      @ApiResponse(responseCode = "204", description = "Password updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
+      @ApiResponse(responseCode = "204", description = "Password updated successfully"),
       @ApiResponse(responseCode = "400", description = "Password does not match", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "403", description = "User without permission to access this resource", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-      @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "422", description = "Invalid or poorly formatted fields", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
   @PatchMapping("/{id}")

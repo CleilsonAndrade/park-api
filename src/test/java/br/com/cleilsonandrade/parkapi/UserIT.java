@@ -218,6 +218,16 @@ public class UserIT {
     testClient
         .patch()
         .uri("/users/100")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("123456", "123456", "123456"))
+        .exchange()
+        .expectStatus().isNoContent();
+
+    testClient
+        .patch()
+        .uri("/users/101")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(new UserPassDTO("123456", "123456", "123456"))
         .exchange()
@@ -225,19 +235,34 @@ public class UserIT {
   }
 
   @Test
-  public void updatePassword_IdUserNonexistent_ReturnErrorMessageWithStatus404() {
+  public void updatePassword_WithDifferentUsers_ReturnErrorMessageWithStatus403() {
     ErrorMessage responseBody = testClient
         .patch()
         .uri("/users/0")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(new UserPassDTO("123456", "123456", "123456"))
         .exchange()
-        .expectStatus().isNotFound()
+        .expectStatus().isForbidden()
         .expectBody(ErrorMessage.class)
         .returnResult().getResponseBody();
 
     org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
-    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+
+    responseBody = testClient
+        .patch()
+        .uri("/users/0")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
+        .contentType(MediaType.APPLICATION_JSON)
+        .bodyValue(new UserPassDTO("123456", "123456", "123456"))
+        .exchange()
+        .expectStatus().isForbidden()
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
   }
 
   @Test
