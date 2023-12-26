@@ -270,6 +270,7 @@ public class UserIT {
     ErrorMessage responseBody = testClient
         .patch()
         .uri("/users/100")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(new UserPassDTO("", "", ""))
         .exchange()
@@ -283,6 +284,7 @@ public class UserIT {
     responseBody = testClient
         .patch()
         .uri("/users/100")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(new UserPassDTO("12345", "12345", "12345"))
         .exchange()
@@ -296,6 +298,7 @@ public class UserIT {
     responseBody = testClient
         .patch()
         .uri("/users/100")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(new UserPassDTO("12345678", "12345678", "12345678"))
         .exchange()
@@ -312,6 +315,7 @@ public class UserIT {
     ErrorMessage responseBody = testClient
         .patch()
         .uri("/users/100")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(new UserPassDTO("123456", "123456", "000000"))
         .exchange()
@@ -325,6 +329,7 @@ public class UserIT {
     responseBody = testClient
         .patch()
         .uri("/users/100")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(new UserPassDTO("000000", "12345", "12345"))
         .exchange()
