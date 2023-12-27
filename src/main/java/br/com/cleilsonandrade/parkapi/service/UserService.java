@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.cleilsonandrade.parkapi.entity.User;
 import br.com.cleilsonandrade.parkapi.entity.User.Role;
+import br.com.cleilsonandrade.parkapi.exception.EntityNotFoundException;
 import br.com.cleilsonandrade.parkapi.exception.UsernameUniqueViolationException;
 import br.com.cleilsonandrade.parkapi.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
