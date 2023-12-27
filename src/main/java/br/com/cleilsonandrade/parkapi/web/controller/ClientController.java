@@ -14,7 +14,13 @@ import br.com.cleilsonandrade.parkapi.service.ClientService;
 import br.com.cleilsonandrade.parkapi.service.UserService;
 import br.com.cleilsonandrade.parkapi.web.dto.ClientCreateDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.ClientResponseDTO;
+import br.com.cleilsonandrade.parkapi.web.dto.UserResponseDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.mapper.ClientMapper;
+import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +34,14 @@ public class ClientController {
 
   private final UserService userService;
 
+  @Operation(summary = "Create a new client", description = "Feature to create a new client, linked to an already registered user. "
+      +
+      "Request requires use of a 'Bearer token'. Restricted access toRole='CLIENT'", responses = {
+          @ApiResponse(responseCode = "201", description = "Resource created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
+          @ApiResponse(responseCode = "403", description = "Feature not allowed for profile ADMIN", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+          @ApiResponse(responseCode = "409", description = "CPF client is already registered in the system", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+          @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      })
   @PostMapping
   @PreAuthorize("hasRole('CLIENT')")
   public ResponseEntity<ClientResponseDTO> create(@RequestBody @Valid ClientCreateDTO dto,
