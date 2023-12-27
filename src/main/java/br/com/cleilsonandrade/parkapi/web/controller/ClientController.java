@@ -92,4 +92,15 @@ public class ClientController {
     Page<ClientProjection> clients = clientService.searchAll(pageable);
     return ResponseEntity.ok(ClientPageableMapper.toDto(clients));
   }
+
+  @Operation(summary = "Retrieve authenticated client data", description = "Request requires use of a 'Bearer token'. Restricted access to Role='CLIENT'", security = @SecurityRequirement(name = "security"), responses = {
+      @ApiResponse(responseCode = "200", description = "Resource localized successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientResponseDTO.class))),
+      @ApiResponse(responseCode = "403", description = "Feature not allowed for profile ADMIN", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+  })
+  @GetMapping("/details")
+  @PreAuthorize("hasRole('CLIENT')")
+  public ResponseEntity<ClientResponseDTO> getDetails(@AuthenticationPrincipal JwtUserDetails userDetails) {
+    Client client = clientService.searchByUserId(userDetails.getId());
+    return ResponseEntity.ok(ClientMapper.toDto(client));
+  }
 }

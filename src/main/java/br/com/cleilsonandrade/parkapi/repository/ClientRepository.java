@@ -11,4 +11,6 @@ import br.com.cleilsonandrade.parkapi.repository.projection.ClientProjection;
 public interface ClientRepository extends JpaRepository<Client, Long> {
   @Query("SELECT c from Client c")
   Page<ClientProjection> searchAll(Pageable pageable);
+
+  Client findByUserId(Long id);
 }
