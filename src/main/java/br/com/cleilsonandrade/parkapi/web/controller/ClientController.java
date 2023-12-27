@@ -36,7 +36,7 @@ public class ClientController {
 
   private final UserService userService;
 
-  @Operation(summary = "Create a new client", description = "Feature to create a new client, linked to an already registered user. "
+  @Operation(summary = "Create a new client", description = "Feature to create a new client, linked to an already registered user"
       +
       "Request requires use of a 'Bearer token'. Restricted access toRole='CLIENT'", responses = {
           @ApiResponse(responseCode = "201", description = "Resource created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
@@ -54,7 +54,15 @@ public class ClientController {
     return ResponseEntity.status(201).body(ClientMapper.toDto(client));
   }
 
+  @Operation(summary = "Localize client", description = "Feature to localize client, get by id"
+      +
+      "Request requires use of a 'Bearer token'. Restricted access toRole='ADMIN'", responses = {
+          @ApiResponse(responseCode = "200", description = "Resource localized successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
+          @ApiResponse(responseCode = "403", description = "Feature not allowed for profileCLIENT", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+          @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      })
   @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ClientResponseDTO> getById(@PathVariable Long id) {
     Client client = clientService.searchById(id);
     return ResponseEntity.ok(ClientMapper.toDto(client));
