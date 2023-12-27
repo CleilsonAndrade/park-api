@@ -47,7 +47,7 @@ public class ClientIT {
         .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .bodyValue(new ClientCreateDTO("Tobias Ferreira", "24122251095"))
         .exchange()
-        .expectStatus().isEqualTo(403)
+        .expectStatus().isForbidden()
         .expectBody(ErrorMessage.class)
         .returnResult().getResponseBody();
 
@@ -139,7 +139,7 @@ public class ClientIT {
         .uri("/clients/0")
         .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
         .exchange()
-        .expectStatus().isNotFound()
+        .expectStatus().isForbidden()
         .expectBody(ErrorMessage.class)
         .returnResult().getResponseBody();
 
@@ -215,7 +215,39 @@ public class ClientIT {
         .uri("/clients/")
         .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
         .exchange()
+        .expectStatus().isForbidden()
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+  }
+
+  @Test
+  public void searchClient_WithDataTokenOfClient_ReturnClientWithStatus200() {
+    ClientResponseDTO responseBody = testClient
+        .get()
+        .uri("/clients/details")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
+        .exchange()
         .expectStatus().isOk()
+        .expectBody(ClientResponseDTO.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(10);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getCpf()).isEqualTo("22381495037");
+    org.assertj.core.api.Assertions.assertThat(responseBody.getName()).isEqualTo("Bianca Silva");
+  }
+
+  @Test
+  public void searchClient_WithDataTokenOfAdmin_ReturnErrorMessageWithStatus403() {
+    ErrorMessage responseBody = testClient
+        .get()
+        .uri("/clients/details")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .exchange()
+        .expectStatus().isForbidden()
         .expectBody(ErrorMessage.class)
         .returnResult().getResponseBody();
 
