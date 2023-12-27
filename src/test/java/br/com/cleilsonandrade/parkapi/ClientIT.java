@@ -9,6 +9,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import br.com.cleilsonandrade.parkapi.web.dto.ClientCreateDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.ClientResponseDTO;
+import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = "/sql/clients/clients-insert.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -34,6 +35,85 @@ public class ClientIT {
     org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isNotNull();
     org.assertj.core.api.Assertions.assertThat(responseBody.getName()).isEqualTo("Tobias Ferreira");
     org.assertj.core.api.Assertions.assertThat(responseBody.getCpf()).isEqualTo("51460558073");
+  }
+
+  @Test
+  public void createClient_WithUserNotAllowed_ReturnErrorMessageStatus403() {
+    ErrorMessage responseBody = testClient
+        .post()
+        .uri("/clients")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .bodyValue(new ClientCreateDTO("Tobias Ferreira", "24122251095"))
+        .exchange()
+        .expectStatus().isEqualTo(403)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+  }
+
+  @Test
+  public void createClient_WithRegisteredCPF_ReturnErrorMessageStatus409() {
+    ErrorMessage responseBody = testClient
+        .post()
+        .uri("/clients")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "toby@email.com", "123456"))
+        .bodyValue(new ClientCreateDTO("Tobias Ferreira", "24122251095"))
+        .exchange()
+        .expectStatus().isEqualTo(409)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
+  }
+
+  @Test
+  public void createClient_WithDataInvalid_ReturnErrorMessageStatus422() {
+    ErrorMessage responseBody = testClient
+        .post()
+        .uri("/clients")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "toby@email.com", "123456"))
+        .bodyValue(new ClientCreateDTO("", ""))
+        .exchange()
+        .expectStatus().isEqualTo(422)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+    responseBody = testClient
+        .post()
+        .uri("/clients")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "toby@email.com", "123456"))
+        .bodyValue(new ClientCreateDTO("To", "00000000000"))
+        .exchange()
+        .expectStatus().isEqualTo(422)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+    responseBody = testClient
+        .post()
+        .uri("/clients")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "toby@email.com", "123456"))
+        .bodyValue(new ClientCreateDTO("To", "000.000.000-00"))
+        .exchange()
+        .expectStatus().isEqualTo(422)
+        .expectBody(ErrorMessage.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
   }
 
 }
