@@ -84,7 +84,6 @@ public class ClientController {
   }, responses = {
       @ApiResponse(responseCode = "200", description = "Resource localized successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientResponseDTO.class))),
       @ApiResponse(responseCode = "403", description = "Feature not allowed for profile CLIENT", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-      @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
   @GetMapping()
   @PreAuthorize("hasRole('ADMIN')")
