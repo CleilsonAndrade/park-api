@@ -1,5 +1,7 @@
 package br.com.cleilsonandrade.parkapi.web.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,12 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.cleilsonandrade.parkapi.entity.Client;
 import br.com.cleilsonandrade.parkapi.jwt.JwtUserDetails;
+import br.com.cleilsonandrade.parkapi.repository.projection.ClientProjection;
 import br.com.cleilsonandrade.parkapi.service.ClientService;
 import br.com.cleilsonandrade.parkapi.service.UserService;
 import br.com.cleilsonandrade.parkapi.web.dto.ClientCreateDTO;
+import br.com.cleilsonandrade.parkapi.web.dto.ClientPageableDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.ClientResponseDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.UserResponseDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.mapper.ClientMapper;
+import br.com.cleilsonandrade.parkapi.web.dto.mapper.ClientPageableMapper;
 import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -66,5 +71,12 @@ public class ClientController {
   public ResponseEntity<ClientResponseDTO> getById(@PathVariable Long id) {
     Client client = clientService.searchById(id);
     return ResponseEntity.ok(ClientMapper.toDto(client));
+  }
+
+  @GetMapping()
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<ClientPageableDTO> getAll(Pageable pageable) {
+    Page<ClientProjection> clients = clientService.searchAll(pageable);
+    return ResponseEntity.ok(ClientPageableMapper.toDto(clients));
   }
 }
