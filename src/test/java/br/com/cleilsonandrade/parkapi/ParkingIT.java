@@ -29,4 +29,49 @@ public class ParkingIT {
         .expectStatus().isCreated()
         .expectHeader().exists(HttpHeaders.LOCATION);
   }
+
+  @Test
+  public void createParking_WithCodeExisting_ReturnErrorMessageWithStatus409() {
+    testClient
+        .post()
+        .uri("/parkings")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .bodyValue(new ParkingCreateDTO("A-01", "AVAILABLE"))
+        .exchange()
+        .expectStatus().isEqualTo(409)
+        .expectBody()
+        .jsonPath("status").isEqualTo(409)
+        .jsonPath("method").isEqualTo("POST")
+        .jsonPath("path").isEqualTo("/parkings");
+  }
+
+  @Test
+  public void createParking_WithDataInvalid_ReturnErrorMessageWithStatus422() {
+    testClient
+        .post()
+        .uri("/parkings")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .bodyValue(new ParkingCreateDTO("", ""))
+        .exchange()
+        .expectStatus().isEqualTo(422)
+        .expectBody()
+        .jsonPath("status").isEqualTo(422)
+        .jsonPath("method").isEqualTo("POST")
+        .jsonPath("path").isEqualTo("/parkings");
+
+    testClient
+        .post()
+        .uri("/parkings")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .bodyValue(new ParkingCreateDTO("A-501", "OCUPE"))
+        .exchange()
+        .expectStatus().isEqualTo(422)
+        .expectBody()
+        .jsonPath("status").isEqualTo(422)
+        .jsonPath("method").isEqualTo("POST")
+        .jsonPath("path").isEqualTo("/parkings");
+  }
 }
