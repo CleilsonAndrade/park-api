@@ -2,6 +2,7 @@ package br.com.cleilsonandrade.parkapi.web.controller;
 
 import java.net.URI;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,15 @@ import br.com.cleilsonandrade.parkapi.entity.Parking;
 import br.com.cleilsonandrade.parkapi.service.ParkingService;
 import br.com.cleilsonandrade.parkapi.web.dto.ParkingCreateDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.ParkingResponseDTO;
+import br.com.cleilsonandrade.parkapi.web.dto.UserResponseDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.mapper.ParkingMapper;
+import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +34,11 @@ import lombok.RequiredArgsConstructor;
 public class ParkingController {
   private final ParkingService parkingService;
 
+  @Operation(summary = "Create a new parking", description = "Feature to create a new parking", responses = {
+      @ApiResponse(responseCode = "201", description = "Resource created successfully", headers = @Header(name = HttpHeaders.LOCATION, description = "URL of the created resource")),
+      @ApiResponse(responseCode = "409", description = "Vacancy already registered", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+  })
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<Void> create(@RequestBody @Valid ParkingCreateDTO dto) {
@@ -41,6 +54,12 @@ public class ParkingController {
     return ResponseEntity.created(location).build();
   }
 
+  @Operation(summary = "Localizar uma vaga", description = "Resource to return a parking using the code"
+      + "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", responses = {
+          @ApiResponse(responseCode = "201", description = "Resource created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
+          @ApiResponse(responseCode = "409", description = "Email user already registered in the system", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+          @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      })
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ParkingResponseDTO> getByCode(@PathVariable String code) {
