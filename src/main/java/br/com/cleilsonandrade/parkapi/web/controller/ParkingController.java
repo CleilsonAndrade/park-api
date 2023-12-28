@@ -16,7 +16,6 @@ import br.com.cleilsonandrade.parkapi.entity.Parking;
 import br.com.cleilsonandrade.parkapi.service.ParkingService;
 import br.com.cleilsonandrade.parkapi.web.dto.ParkingCreateDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.ParkingResponseDTO;
-import br.com.cleilsonandrade.parkapi.web.dto.UserResponseDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.mapper.ParkingMapper;
 import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -34,8 +34,9 @@ import lombok.RequiredArgsConstructor;
 public class ParkingController {
   private final ParkingService parkingService;
 
-  @Operation(summary = "Create a new parking", description = "Feature to create a new parking", responses = {
+  @Operation(summary = "Create a new parking", description = "Feature to create a new parking", security = @SecurityRequirement(name = "security"), responses = {
       @ApiResponse(responseCode = "201", description = "Resource created successfully", headers = @Header(name = HttpHeaders.LOCATION, description = "URL of the created resource")),
+      @ApiResponse(responseCode = "403", description = "Resource not allowed for the profile 'CLIENT'", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "409", description = "Vacancy already registered", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
@@ -55,10 +56,10 @@ public class ParkingController {
   }
 
   @Operation(summary = "Localizar uma vaga", description = "Resource to return a parking using the code"
-      + "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", responses = {
-          @ApiResponse(responseCode = "201", description = "Resource created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
-          @ApiResponse(responseCode = "409", description = "Email user already registered in the system", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-          @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      + "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", security = @SecurityRequirement(name = "security"), responses = {
+          @ApiResponse(responseCode = "200", description = "The parking data is returned using its code", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParkingResponseDTO.class))),
+          @ApiResponse(responseCode = "404", description = "Parking not located", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+          @ApiResponse(responseCode = "403", description = "Resource not allowed for the profile 'CLIENT'", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       })
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
