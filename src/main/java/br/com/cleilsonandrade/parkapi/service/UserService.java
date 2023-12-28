@@ -21,7 +21,7 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public User save(User user) {
+  public User create(User user) {
     try {
       user.setPassword(passwordEncoder.encode(user.getPassword()));
       return this.userRepository.save(user);
