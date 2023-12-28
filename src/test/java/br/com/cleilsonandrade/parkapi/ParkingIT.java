@@ -74,4 +74,32 @@ public class ParkingIT {
         .jsonPath("method").isEqualTo("POST")
         .jsonPath("path").isEqualTo("/parkings");
   }
+
+  @Test
+  public void searchParking_WithCodeExisting_ReturnParkingWithStatus200() {
+    testClient
+        .get()
+        .uri("/parkings/{code}", "A-01")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody()
+        .jsonPath("id").isEqualTo(10)
+        .jsonPath("code").isEqualTo("A-01")
+        .jsonPath("status").isEqualTo("AVAILABLE");
+  }
+
+  @Test
+  public void searchParking_WithCodeNonexistent_ReturnErrorMessageWithStatus404() {
+    testClient
+        .get()
+        .uri("/parkings/{code}", "A-10")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .exchange()
+        .expectStatus().isNotFound()
+        .expectBody()
+        .jsonPath("status").isEqualTo(404)
+        .jsonPath("method").isEqualTo("GET")
+        .jsonPath("code").isEqualTo("/parkings/A-10");
+  }
 }
