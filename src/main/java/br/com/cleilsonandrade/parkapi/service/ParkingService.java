@@ -32,7 +32,7 @@ public class ParkingService {
 
   @Transactional(readOnly = true)
   public Parking searchByParkingAvailable() {
-    return parkingRepository.findFirstByStatus(AVAILABLE).orElseThrow(
+    return parkingRepository.findFirstByStatus(Parking.StatusParking.AVAILABLE).orElseThrow(
         () -> new EntityNotFoundException("No free parkings were found"));
   }
 }
