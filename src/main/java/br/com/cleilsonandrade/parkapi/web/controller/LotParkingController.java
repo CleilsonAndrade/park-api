@@ -5,6 +5,8 @@ import java.net.URI;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.cleilsonandrade.parkapi.entity.ClientParking;
+import br.com.cleilsonandrade.parkapi.service.ClientParkingService;
 import br.com.cleilsonandrade.parkapi.service.LotParkingService;
 import br.com.cleilsonandrade.parkapi.web.dto.LotParkingCreateDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.LotParkingResponseDTO;
@@ -31,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LotParkingController {
   private final LotParkingService lotParkingService;
+  private final ClientParkingService clientParkingService;
 
   @Operation(summary = "Create a new check-in in parking lot", description = "Resource for entering a vehicle into the parking lot"
       +
@@ -59,4 +63,12 @@ public class LotParkingController {
     return ResponseEntity.created(location).body(responseDTO);
   }
 
+  @GetMapping("/check-in/{receipt}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
+  public ResponseEntity<LotParkingResponseDTO> getByReceipt(@PathVariable String receipt) {
+    ClientParking clientParking = clientParkingService.searchByReceipt(receipt);
+    LotParkingResponseDTO dto = ClientParkingMapper.toDto(clientParking);
+
+    return ResponseEntity.ok(dto);
+  }
 }
