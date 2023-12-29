@@ -24,16 +24,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/parking-lots")
+@RequiredArgsConstructor
 public class LotParkingController {
   private final LotParkingService lotParkingService;
 
   @Operation(summary = "Create a new check-in in parking lot", description = "Resource for entering a vehicle into the parking lot"
       +
       "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", security = @SecurityRequirement(name = "security"), responses = {
-          @ApiResponse(responseCode = "201", description = "Resource created successfully", headers = @Header(name = HttpHeaders.LOCATION, description = "URl access to the created resource"), content = @Content(mediaType = "application/json", schema = @Schema(implementation = LotParkingResponseDTO.class))),
+          @ApiResponse(responseCode = "201", description = "Resource created successfully", headers = @Header(name = HttpHeaders.LOCATION, description = "URL access to the created resource"), content = @Content(mediaType = "application/json", schema = @Schema(implementation = LotParkingResponseDTO.class))),
           @ApiResponse(responseCode = "403", description = "Feature not allowed for profile ADMIN", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
           @ApiResponse(responseCode = "404", description = "Possible causes: <br/>"
               + "- Customer CPF not registered in the system; </br>"
