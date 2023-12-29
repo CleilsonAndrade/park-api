@@ -29,4 +29,10 @@ public class ParkingService {
     return parkingRepository.findByCode(code).orElseThrow(
         () -> new EntityNotFoundException(String.format("Parking with code '%s' not found", code)));
   }
+
+  @Transactional(readOnly = true)
+  public Parking searchByParkingAvailable() {
+    return parkingRepository.findFirstByStatus(AVAILABLE).orElseThrow(
+        () -> new EntityNotFoundException("No free parkings were found"));
+  }
 }
