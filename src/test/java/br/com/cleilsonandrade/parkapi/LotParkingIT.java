@@ -61,12 +61,62 @@ public class LotParkingIT {
         .post()
         .uri("/parking-lots/check-in")
         .contentType(MediaType.APPLICATION_JSON)
-        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "biaa@email.com", "123456"))
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
         .bodyValue(createDTO)
         .exchange()
         .expectStatus().isForbidden()
         .expectBody()
         .jsonPath("status").isEqualTo(403)
+        .jsonPath("path").isEqualTo("/parking-lots/check-in")
+        .jsonPath("method").isEqualTo("POST");
+  }
+
+  @Test
+  public void createCheckIn_WithCpfNonexistent_ReturnErrorStatus404() {
+    LotParkingCreateDTO createDTO = LotParkingCreateDTO.builder()
+        .plate("WER-1111")
+        .brand("brand")
+        .model("PALIO 1.0")
+        .color("AZUL")
+        .clientCpf("03394550040")
+        .build();
+
+    testClient
+        .post()
+        .uri("/parking-lots/check-in")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .bodyValue(createDTO)
+        .exchange()
+        .expectStatus().isNotFound()
+        .expectBody()
+        .jsonPath("status").isEqualTo(404)
+        .jsonPath("path").isEqualTo("/parking-lots/check-in")
+        .jsonPath("method").isEqualTo("POST");
+  }
+
+  @Test
+  @Sql(scripts = "/sql/lot-parkings/lot-parkings-parking-busy-insert.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+  @Sql(scripts = "/sql/lot-parkings/lot-parkings-parking-busy-delete.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+  public void createCheckIn_WithParkingBusy_ReturnErrorStatus404() {
+    LotParkingCreateDTO createDTO = LotParkingCreateDTO.builder()
+        .plate("WER-1111")
+        .brand("brand")
+        .model("PALIO 1.0")
+        .color("AZUL")
+        .clientCpf("22381495037")
+        .build();
+
+    testClient
+        .post()
+        .uri("/parking-lots/check-in")
+        .contentType(MediaType.APPLICATION_JSON)
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .bodyValue(createDTO)
+        .exchange()
+        .expectStatus().isNotFound()
+        .expectBody()
+        .jsonPath("status").isEqualTo(404)
         .jsonPath("path").isEqualTo("/parking-lots/check-in")
         .jsonPath("method").isEqualTo("POST");
   }
@@ -85,7 +135,7 @@ public class LotParkingIT {
         .post()
         .uri("/parking-lots/check-in")
         .contentType(MediaType.APPLICATION_JSON)
-        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "biaa@email.com", "123456"))
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
         .bodyValue(createDTO)
         .exchange()
         .expectStatus().isEqualTo(422)
