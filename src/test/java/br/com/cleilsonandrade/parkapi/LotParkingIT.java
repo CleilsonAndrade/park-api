@@ -38,7 +38,7 @@ public class LotParkingIT {
         .expectHeader().exists(HttpHeaders.LOCATION)
         .expectBody()
         .jsonPath("plate").isEqualTo("WER-1111")
-        .jsonPath("brand").isEqualTo("brand")
+        .jsonPath("brand").isEqualTo("FIAT")
         .jsonPath("model").isEqualTo("PALIO 1.0")
         .jsonPath("color").isEqualTo("AZUL1")
         .jsonPath("clientCpf").isEqualTo("22381495037")
@@ -143,5 +143,57 @@ public class LotParkingIT {
         .jsonPath("status").isEqualTo(422)
         .jsonPath("path").isEqualTo("/parking-lots/check-in")
         .jsonPath("method").isEqualTo("POST");
+  }
+
+  @Test
+  public void searchCheckIn_WithRoleAdmin_ReturnDataWithStatus200() {
+    testClient
+        .get()
+        .uri("/parking-lots/check-in/{receipt}", "20230313-101300")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody()
+        .jsonPath("plate").isEqualTo("FIT-1020")
+        .jsonPath("brand").isEqualTo("FIAT")
+        .jsonPath("model").isEqualTo("PALIO")
+        .jsonPath("color").isEqualTo("VERDE")
+        .jsonPath("clientCpf").isEqualTo("24122251095")
+        .jsonPath("receipt").isEqualTo("20230313-101300")
+        .jsonPath("parkingCode").isEqualTo("A-01")
+        .jsonPath("dateEntry").isEqualTo("2023-03-13 10:15:00");
+  }
+
+  @Test
+  public void searchCheckIn_WithRoleClient_ReturnDataWithStatus200() {
+    testClient
+        .get()
+        .uri("/parking-lots/check-in/{receipt}", "20230313-101300")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@email.com", "123456"))
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody()
+        .jsonPath("plate").isEqualTo("FIT-1020")
+        .jsonPath("brand").isEqualTo("FIAT")
+        .jsonPath("model").isEqualTo("PALIO")
+        .jsonPath("color").isEqualTo("VERDE")
+        .jsonPath("clientCpf").isEqualTo("24122251095")
+        .jsonPath("receipt").isEqualTo("20230313-101300")
+        .jsonPath("parkingCode").isEqualTo("A-01")
+        .jsonPath("dateEntry").isEqualTo("2023-03-13 10:15:00");
+  }
+
+  @Test
+  public void searchCheckIn_WithReceiptNonexistent_ReturnErrorWithStatus404() {
+    testClient
+        .get()
+        .uri("/parking-lots/check-in/{receipt}", "20230313-000000")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@email.com", "123456"))
+        .exchange()
+        .expectStatus().isNotFound()
+        .expectBody()
+        .jsonPath("status").isEqualTo(404)
+        .jsonPath("path").isEqualTo("/parking-lots/check-in/20230313-000000")
+        .jsonPath("method").isEqualTo("GET");
   }
 }
