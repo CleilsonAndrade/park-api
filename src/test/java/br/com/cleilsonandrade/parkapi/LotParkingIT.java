@@ -294,4 +294,51 @@ public class LotParkingIT {
         .jsonPath("path").isEqualTo("/parking-lots/cpf/24122251095")
         .jsonPath("method").isEqualTo("GET");
   }
+
+  @Test
+  public void searchLotParkings_ClientAuthenticated_ReturnSuccess() {
+    PageableDTO responseBody = testClient
+        .get()
+        .uri("/parking-lots?size=1&page=0", "24122251095")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@email.com", "123456"))
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(PageableDTO.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(0);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getSize()).isEqualTo(1);
+
+    responseBody = testClient
+        .get()
+        .uri("/parking-lot?size=1&page=1")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@email.com", "123456"))
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(PageableDTO.class)
+        .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(1);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+    org.assertj.core.api.Assertions.assertThat(responseBody.getSize()).isEqualTo(1);
+  }
+
+  @Test
+  public void searchLotParkings_ClientAuthenticatedWithRoleAdmin_ReturnErrorStatus403() {
+    testClient
+        .get()
+        .uri("/parking-lots/")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .exchange()
+        .expectStatus().isForbidden()
+        .expectBody()
+        .jsonPath("status").isEqualTo(403)
+        .jsonPath("path").isEqualTo("/parking-lots/")
+        .jsonPath("method").isEqualTo("GET");
+  }
 }
