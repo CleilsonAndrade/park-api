@@ -119,7 +119,7 @@ public class LotParkingController {
                     @Parameter(in = ParameterIn.QUERY, name = "size", content = @Content(schema = @Schema(type = "integer", defaultValue = "20")), description = "Represents the total number of elements per page"),
                     @Parameter(in = ParameterIn.QUERY, name = "sort", hidden = true, array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "id,asc")), description = "Represents the ordering of results. Accepts multiple sorting criteria are supported"),
             }, responses = {
-                    @ApiResponse(responseCode = "200", description = "Resource updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LotParkingResponseDTO.class))),
+                    @ApiResponse(responseCode = "200", description = "Resource located successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageableDTO.class))),
                     @ApiResponse(responseCode = "403", description = "Feature not allowed for profile CLIENT", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @GetMapping("/cpf/{cpf}")
