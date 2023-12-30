@@ -8,8 +8,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import br.com.cleilsonandrade.parkapi.web.dto.ClientCreateDTO;
-import br.com.cleilsonandrade.parkapi.web.dto.ClientPageableDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.ClientResponseDTO;
+import br.com.cleilsonandrade.parkapi.web.dto.PageableDTO;
 import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -179,13 +179,13 @@ public class ClientIT {
 
   @Test
   public void searchAllClients_WithPageableViaAdmin_ReturnClientsWithStatus200() {
-    ClientPageableDTO responseBody = testClient
+    PageableDTO responseBody = testClient
         .get()
         .uri("/clients/")
         .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .exchange()
         .expectStatus().isOk()
-        .expectBody(ClientPageableDTO.class)
+        .expectBody(PageableDTO.class)
         .returnResult().getResponseBody();
 
     org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
@@ -199,7 +199,7 @@ public class ClientIT {
         .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
         .exchange()
         .expectStatus().isOk()
-        .expectBody(ClientPageableDTO.class)
+        .expectBody(PageableDTO.class)
         .returnResult().getResponseBody();
 
     org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();

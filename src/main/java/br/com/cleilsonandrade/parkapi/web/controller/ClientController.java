@@ -19,8 +19,8 @@ import br.com.cleilsonandrade.parkapi.repository.projection.ClientProjection;
 import br.com.cleilsonandrade.parkapi.service.ClientService;
 import br.com.cleilsonandrade.parkapi.service.UserService;
 import br.com.cleilsonandrade.parkapi.web.dto.ClientCreateDTO;
-import br.com.cleilsonandrade.parkapi.web.dto.ClientPageableDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.ClientResponseDTO;
+import br.com.cleilsonandrade.parkapi.web.dto.PageableDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.mapper.ClientMapper;
 import br.com.cleilsonandrade.parkapi.web.dto.mapper.ClientPageableMapper;
 import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
@@ -87,7 +87,7 @@ public class ClientController {
   })
   @GetMapping()
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<ClientPageableDTO> getAll(
+  public ResponseEntity<PageableDTO> getAll(
       @Parameter(hidden = true) @PageableDefault(size = 5, sort = { "name" }) Pageable pageable) {
     Page<ClientProjection> clients = clientService.searchAll(pageable);
     return ResponseEntity.ok(ClientPageableMapper.toDto(clients));

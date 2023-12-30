@@ -1,11 +1,14 @@
 package br.com.cleilsonandrade.parkapi.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.cleilsonandrade.parkapi.entity.ClientParking;
 import br.com.cleilsonandrade.parkapi.exception.EntityNotFoundException;
 import br.com.cleilsonandrade.parkapi.repository.ClientParkingRepository;
+import br.com.cleilsonandrade.parkapi.repository.projection.ClientParkingProjection;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,5 +31,9 @@ public class ClientParkingService {
   @Transactional(readOnly = true)
   public long getTotalTimesLotParkingComplete(String cpf) {
     return repository.countByClientCpfAndDateDepartureIsNotNull(cpf);
+  }
+
+  public Page<ClientParkingProjection> searchAllByClientCpf(String cpf, Pageable pageable) {
+    return repository.findAllByClientCpf(cpf, pageable);
   }
 }
