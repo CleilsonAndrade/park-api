@@ -17,4 +17,6 @@ public interface ClientParkingRepository extends JpaRepository<ClientParking, Lo
 
   Page<ClientParkingProjection> findAllByClientCpf(String cpf, Pageable pageable);
 
+  Page<ClientParkingProjection> findAllByClientUserId(Long id, Pageable pageable);
+
 }

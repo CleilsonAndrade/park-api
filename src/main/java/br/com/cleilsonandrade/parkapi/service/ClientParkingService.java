@@ -33,7 +33,13 @@ public class ClientParkingService {
     return repository.countByClientCpfAndDateDepartureIsNotNull(cpf);
   }
 
+  @Transactional(readOnly = true)
   public Page<ClientParkingProjection> searchAllByClientCpf(String cpf, Pageable pageable) {
     return repository.findAllByClientCpf(cpf, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<ClientParkingProjection> searchAllByClientCpf(Long id, Pageable pageable) {
+    return repository.findAllByClientUserId(id, pageable);
   }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.cleilsonandrade.parkapi.entity.ClientParking;
+import br.com.cleilsonandrade.parkapi.jwt.JwtUserDetails;
 import br.com.cleilsonandrade.parkapi.repository.projection.ClientParkingProjection;
 import br.com.cleilsonandrade.parkapi.service.ClientParkingService;
 import br.com.cleilsonandrade.parkapi.service.LotParkingService;
@@ -111,7 +113,7 @@ public class LotParkingController {
         return ResponseEntity.ok(dto);
     }
 
-    @Operation(summary = "Find customer parking records by CPF", description = "Find customer parking records by CPF"
+    @Operation(summary = "Find client parking records by CPF", description = "Find client parking records by CPF"
             +
             "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", security = @SecurityRequirement(name = "security"), parameters = {
                     @Parameter(in = ParameterIn.QUERY, name = "cpf", content = @Content(schema = @Schema(type = "integer", defaultValue = "0")), description = "'N' of the CPF for the client to be consulted"),
@@ -127,6 +129,24 @@ public class LotParkingController {
     public ResponseEntity<PageableDTO> getAllLotParkingsByCpf(@PathVariable String cpf,
             @PageableDefault(size = 5, sort = "dateEntry", direction = Direction.ASC) Pageable pageable) {
         Page<ClientParkingProjection> projection = clientParkingService.searchAllByClientCpf(cpf, pageable);
+        PageableDTO dto = PageableMapper.toDto(projection);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(summary = "Find authenticated client records", description = "Find authenticated client records"
+            +
+            "Request requires use of a 'Bearer token'. Restricted access to Role='CLIENT'", security = @SecurityRequirement(name = "security"), parameters = {
+                    @Parameter(in = ParameterIn.QUERY, name = "size", content = @Content(schema = @Schema(type = "integer", defaultValue = "20")), description = "Represents the total number of elements per page"),
+                    @Parameter(in = ParameterIn.QUERY, name = "sort", hidden = true, array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "id,asc")), description = "Represents the ordering of results. Accepts multiple sorting criteria are supported"),
+            }, responses = {
+                    @ApiResponse(responseCode = "200", description = "Resource located successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageableDTO.class))),
+                    @ApiResponse(responseCode = "403", description = "Feature not allowed for profile ADMIN", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            })
+    @GetMapping
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<PageableDTO> getAllLotParkingsOfClient(@AuthenticationPrincipal JwtUserDetails user,
+            @PageableDefault(size = 5, sort = "dateEntry", direction = Direction.ASC) Pageable pageable) {
+        Page<ClientParkingProjection> projection = clientParkingService.searchAllByClientCpf(user.getId(), pageable);
         PageableDTO dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
     }
