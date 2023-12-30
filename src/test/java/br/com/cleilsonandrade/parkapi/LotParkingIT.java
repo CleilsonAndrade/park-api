@@ -196,4 +196,54 @@ public class LotParkingIT {
         .jsonPath("path").isEqualTo("/parking-lots/check-in/20230313-000000")
         .jsonPath("method").isEqualTo("GET");
   }
+
+  @Test
+  public void createCheckOut_WithReceiptExistent_ReturnSuccessStatus200() {
+    testClient
+        .put()
+        .uri("/parking-lots/check-out/{receipt}", "20230313-101300")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody()
+        .jsonPath("plate").isEqualTo("FIT-1020")
+        .jsonPath("brand").isEqualTo("FIAT")
+        .jsonPath("model").isEqualTo("PALIO")
+        .jsonPath("color").isEqualTo("VERDE")
+        .jsonPath("clientCpf").isEqualTo("24122251095")
+        .jsonPath("receipt").isEqualTo("20230313-101300")
+        .jsonPath("parkingCode").isEqualTo("A-01")
+        .jsonPath("dateEntry").isEqualTo("2023-03-13 10:15:00")
+        .jsonPath("dateDeparture").exists()
+        .jsonPath("value").exists()
+        .jsonPath("discount").exists();
+  }
+
+  @Test
+  public void createCheckOut_WithRoleClient_ReturnErrorStatus403() {
+    testClient
+        .put()
+        .uri("/parking-lots/check-out/{receipt}", "20230313-101300")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
+        .exchange()
+        .expectStatus().isForbidden()
+        .expectBody()
+        .jsonPath("status").isEqualTo(403)
+        .jsonPath("path").isEqualTo("/parking-lots/check-out/20230313-101300")
+        .jsonPath("method").isEqualTo("PUT");
+  }
+
+  @Test
+  public void createCheckOut_WithReceiptNonexistent_ReturnErrorStatus404() {
+    testClient
+        .put()
+        .uri("/parking-lots/check-out/{receipt}", "20230313-000000")
+        .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+        .exchange()
+        .expectStatus().isNotFound()
+        .expectBody()
+        .jsonPath("status").isEqualTo(404)
+        .jsonPath("path").isEqualTo("/parking-lots/check-out/20230313-000000")
+        .jsonPath("method").isEqualTo("PUT");
+  }
 }
