@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -78,6 +79,15 @@ public class LotParkingController {
   @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
   public ResponseEntity<LotParkingResponseDTO> getByReceipt(@PathVariable String receipt) {
     ClientParking clientParking = clientParkingService.searchByReceipt(receipt);
+    LotParkingResponseDTO dto = ClientParkingMapper.toDto(clientParking);
+
+    return ResponseEntity.ok(dto);
+  }
+
+  @PutMapping("/check-out/{receipt}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<LotParkingResponseDTO> checkOut(@PathVariable String receipt) {
+    ClientParking clientParking = lotParkingService.checkOut(receipt);
     LotParkingResponseDTO dto = ClientParkingMapper.toDto(clientParking);
 
     return ResponseEntity.ok(dto);

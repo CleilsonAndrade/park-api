@@ -1,5 +1,6 @@
 package br.com.cleilsonandrade.parkapi.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -32,6 +33,25 @@ public class LotParkingService {
     clientParking.setParking(parking);
     clientParking.setDateEntry(LocalDateTime.now());
     clientParking.setReceipt(LotParkingUtils.generatedReceipt());
+
+    return clientParkingService.create(clientParking);
+  }
+
+  @Transactional
+  public ClientParking checkOut(String receipt) {
+    ClientParking clientParking = clientParkingService.searchByReceipt(receipt);
+
+    LocalDateTime dateDeparture = LocalDateTime.now();
+
+    BigDecimal value = LotParkingUtils.calculateCost(clientParking.getDateEntry(), dateDeparture);
+    clientParking.setValue(value);
+
+    long totalTimes = clientParkingService.getTotalTimesLotParkingComplete(clientParking.getClient().getCpf());
+    BigDecimal discount = LotParkingUtils.calculateDiscount(value, totalTimes);
+    clientParking.setDiscount(discount);
+
+    clientParking.setDateDeparture(dateDeparture);
+    clientParking.getParking().setStatus(Parking.StatusParking.AVAILABLE);
 
     return clientParkingService.create(clientParking);
   }

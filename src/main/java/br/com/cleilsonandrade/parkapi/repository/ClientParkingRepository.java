@@ -10,4 +10,6 @@ public interface ClientParkingRepository extends JpaRepository<ClientParking, Lo
 
   Optional<ClientParking> findByReceiptAndDateDepartureIsNull(String receipt);
 
+  long countByClientCpfAndDateDepartureIsNotNull(String cpf);
+
 }

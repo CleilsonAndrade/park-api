@@ -24,4 +24,9 @@ public class ClientParkingService {
         () -> new EntityNotFoundException(
             String.format("Receipt '%s' not found in the system or checkout already carried out", receipt)));
   }
+
+  @Transactional(readOnly = true)
+  public long getTotalTimesLotParkingComplete(String cpf) {
+    return repository.countByClientCpfAndDateDepartureIsNotNull(cpf);
+  }
 }
