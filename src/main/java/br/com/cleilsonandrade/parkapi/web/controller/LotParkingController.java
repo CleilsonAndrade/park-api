@@ -158,6 +158,12 @@ public class LotParkingController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "PDF report with customer parking lots", description = "Feature to generate a report with the customer's parking lots"
+            +
+            "Request requires use of a 'Bearer token'. Restricted access to Role='CLIENT", security = @SecurityRequirement(name = "security"), responses = {
+                    @ApiResponse(responseCode = "200", description = "Report generated successfully", content = @Content(mediaType = "application/pdf", schema = @Schema(implementation = LotParkingResponseDTO.class))),
+                    @ApiResponse(responseCode = "403", description = "I don't allow the ADMIN profile feature", content = @Content(mediaType = " application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class)))
+            })
     @GetMapping("/reports")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Void> getReports(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user)
