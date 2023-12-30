@@ -1,5 +1,6 @@
 package br.com.cleilsonandrade.parkapi.web.controller;
 
+import java.io.IOException;
 import java.net.URI;
 
 import org.springframework.data.domain.Page;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +25,8 @@ import br.com.cleilsonandrade.parkapi.entity.ClientParking;
 import br.com.cleilsonandrade.parkapi.jwt.JwtUserDetails;
 import br.com.cleilsonandrade.parkapi.repository.projection.ClientParkingProjection;
 import br.com.cleilsonandrade.parkapi.service.ClientParkingService;
+import br.com.cleilsonandrade.parkapi.service.ClientService;
+import br.com.cleilsonandrade.parkapi.service.JasperService;
 import br.com.cleilsonandrade.parkapi.service.LotParkingService;
 import br.com.cleilsonandrade.parkapi.web.dto.LotParkingCreateDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.LotParkingResponseDTO;
@@ -40,6 +44,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -50,6 +55,8 @@ import lombok.RequiredArgsConstructor;
 public class LotParkingController {
     private final LotParkingService lotParkingService;
     private final ClientParkingService clientParkingService;
+    private final ClientService clientService;
+    private final JasperService jasperService;
 
     @Operation(summary = "Create a new check-in in parking lot", description = "Resource for entering a vehicle into the parking lot"
             +
@@ -149,5 +156,21 @@ public class LotParkingController {
         Page<ClientParkingProjection> projection = clientParkingService.searchAllByClientCpf(user.getId(), pageable);
         PageableDTO dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/reports")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<Void> getReports(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user)
+            throws IOException {
+        String cpf = clientService.searchByUserId(user.getId()).getCpf();
+        jasperService.addParams("CPF", cpf);
+
+        byte[] bytes = jasperService.generatedPdf();
+
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        response.setHeader("Content-disposition", "inline; filename=" + System.currentTimeMillis() + ".pdf");
+        response.getOutputStream().write(bytes);
+
+        return ResponseEntity.ok().build();
     }
 }
