@@ -57,7 +57,7 @@ public class ParkingController {
     return ResponseEntity.created(location).build();
   }
 
-  @Operation(summary = "Localizar uma vaga", description = "Resource to return a parking using the code"
+  @Operation(summary = "Find a parking lot", description = "Resource to return a parking using the code"
       + "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", security = @SecurityRequirement(name = "security"), responses = {
           @ApiResponse(responseCode = "200", description = "The parking data is returned using its code", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParkingResponseDTO.class))),
           @ApiResponse(responseCode = "404", description = "Parking not located", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
