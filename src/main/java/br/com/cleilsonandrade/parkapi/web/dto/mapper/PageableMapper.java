@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PageableMapper {
 
-    public static PageableDTO toDto(Page page) {
+    public static PageableDTO toDto(Page<?> page) {
         return new ModelMapper().map(page, PageableDTO.class);
     }
 }

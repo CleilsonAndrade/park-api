@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class AuthenticationController {
       @ApiResponse(responseCode = "422", description = "Invalid field(s)", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
   })
   @PostMapping
-  public ResponseEntity<?> authenticate(@RequestBody @Valid UserLoginDTO dto, HttpServlet request) {
+  public ResponseEntity<?> authenticate(@RequestBody @Valid UserLoginDTO dto, HttpServletRequest request) {
     log.info("Login authentication process {}", dto.getUsername());
 
     try {
@@ -57,7 +57,7 @@ public class AuthenticationController {
     }
 
     return ResponseEntity.badRequest()
-        .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, "Credentials Invalid"));
+        .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, "Credentials Invalid", null));
 
   }
 }

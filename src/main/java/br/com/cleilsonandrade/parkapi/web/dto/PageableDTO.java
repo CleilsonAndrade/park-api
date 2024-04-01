@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PageableDTO {
-    private List content = new ArrayList<>();
+    private List<String> content = new ArrayList<>();
     private boolean first;
     private boolean last;
     @JsonProperty("page")

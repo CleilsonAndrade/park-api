@@ -16,8 +16,9 @@ public class SpringDocOpenApiConfig {
   public OpenAPI openAPI() {
     return new OpenAPI()
         .components(new Components().addSecuritySchemes("security", securityScheme()))
-        .info(new Info().title("REST API - Spring Park").description("API for vehicle parking management").version("v1")
-            .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0"))
+        .info(new Info().title("Park API").description("API for vehicle parking management").version("v1")
+            .license(new License().name("MIT")
+                .url("https://raw.githubusercontent.com/CleilsonAndrade/park-api/main/LICENSE"))
             .contact(new Contact().email("cleilsonjose@hotmail.com").name("Cleilson Andrade")));
   }
 
