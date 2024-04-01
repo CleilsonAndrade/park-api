@@ -15,8 +15,6 @@
 # 📃 <span id="descrição">Descrição</span>
 Sistema de gerenciamento de vagas de estacionamento. Possui recursos como autenticação de usuários, cadastrar e gerenciar informações de usuários, com perfis de cliente e administrador. Ele também permite consultas específicas, como listar usuários cadastrados, atualizar senhas, e realizar operações de check-in e check-out de veículos estacionados. Além disso, o sistema gera relatórios de estacionamentos. Desenvolvido com tecnologias como [**Java**](https://www.java.com/) e o framework [**Spring**](https://spring.io/), sendo sistema robusto, permitindo persistência em banco de dados [**MySQL**](https://www.mysql.com/), com cobertura de testes utilizando [**JUnit**](https://junit.org/junit5/), autenticação usando o [**Spring Security**](https://spring.io/projects/spring-security), token [**JWT**](https://jwt.io/) e encriptação de senhas utilizando [**BCrypt**](https://en.wikipedia.org/wiki/Bcrypt).
 
-Aplicação desenvolvida utilizando a API do [**GitHub**](https://docs.github.com/pt/rest/guides/getting-started-with-the-rest-api), para realizar busca de usuários, utilizando a lib [**axios**](https://github.com/axios/axios) para requisições e respostas.
-
 # 📌 <span id="requisitos">Requisitos Funcionais</span>
 - [x] Cadastramento de um usuário<br>
 - [x] Listar todos os usuário cadastrados<br>
