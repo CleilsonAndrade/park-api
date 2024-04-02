@@ -58,7 +58,7 @@ Sistema de gerenciamento de vagas de estacionamento. Possui recursos como autent
 # 📍 <span id="endpoints">Endpoints</span>
 | Endpoint               | Resumo                                          | Autenticação
 |----------------------|-----------------------------------------------------|----------------------
-| <kbd>POST /auth </kbd> | Responsável por autenticar o usuário, gerando o Bearer Token *JWT* | Não
+| <kbd>POST /auth </kbd> | Responsável por autenticar o usuário, gerando o Bearer Token *JWT* | Sim
 | <kbd>POST /users </kbd> | Responsável por cadastramento de um usuário | Não
 | <kbd>GET /users/:id </kbd> | Responsável por consultar as informações de um usuário especifico, informando o ID | ADMIN, CLIENT
 | <kbd>GET /users </kbd> | Responsável por listar todos os usuário cadastrados | ADMIN
