@@ -75,7 +75,7 @@ Sistema de gerenciamento de vagas de estacionamento. Possui recursos como autent
 | <kbd>GET /parking-lots/cpf/:cpf </kbd> | Responsável por listar todos os registros de estacionamento de um cliente, informando o CPF | ADMIN
 | <kbd>GET /parking-lots </kbd> | Responsável por listar todos os registros de estacionamento do usuário em sessão ativa com perfil de cliente | CLIENT
 | <kbd>GET /reports</kbd> | Responsável por gerar relatório de estacionamentos do usuário em sessão ativa com perfil de cliente, utilizando o Jasper Reports | CLIENT
-| <kbd>GET /docs-park.html </kbd> | Responsável por servir a documentação dos recursos da API
+| <kbd>GET /swagger-ui/index.html </kbd> | Responsável por servir a documentação dos recursos da API
 | <kbd>GET /h2-console </kbd> | Responsável por acesso ao *H2 Database*
 
 # 🚀 <span id="instalação">Instalação</span>

@@ -1,7 +1,5 @@
 package br.com.cleilsonandrade.parkapi.config;
 
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,6 +21,13 @@ import br.com.cleilsonandrade.parkapi.jwt.JwtAuthorizationFilter;
 @EnableWebMvc
 @Configuration
 public class SpringSecurityConfig {
+
+  private static final String[] SWAGGER_LIST = {
+      "/swagger-ui/**",
+      "/v3/api-docs/**",
+      "/swagger-resource/**",
+  };
+
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http
@@ -35,12 +40,7 @@ public class SpringSecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth").permitAll()
-                .requestMatchers(
-                    antMatcher("/docs-park.html"),
-                    antMatcher("/docs-park/**"),
-                    antMatcher("/swagger-ui.html"),
-                    antMatcher("/swagger-ui/**"),
-                    antMatcher("/webjars/**"))
+                .requestMatchers(SWAGGER_LIST)
                 .permitAll()
                 .anyRequest().authenticated())
         .sessionManagement(
