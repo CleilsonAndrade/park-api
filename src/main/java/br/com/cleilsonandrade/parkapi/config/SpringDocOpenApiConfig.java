@@ -17,9 +17,10 @@ public class SpringDocOpenApiConfig {
     return new OpenAPI()
         .components(new Components().addSecuritySchemes("security", securityScheme()))
         .info(new Info().title("Park API").description("API for vehicle parking management").version("v1")
-            .license(new License().name("MIT")
+            .license(new License().name("License")
                 .url("https://raw.githubusercontent.com/CleilsonAndrade/park-api/main/LICENSE"))
-            .contact(new Contact().email("cleilsonjose@hotmail.com").name("Cleilson Andrade")));
+            .contact(new Contact().email("cleilsonjose@hotmail.com").name("Cleilson Andrade")
+                .url("https://www.linkedin.com/in/cleilson-andrade/")));
   }
 
   private SecurityScheme securityScheme() {
