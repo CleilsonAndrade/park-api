@@ -85,7 +85,7 @@ Sistema de gerenciamento de vagas de estacionamento. Possui recursos como autent
   $ cd ./park-api
 
    # Instalar as dependências:
-  $ mvn clean instal
+  $ mvn clean install
 
   # Executar:
   $ mvn spring-boot:run
