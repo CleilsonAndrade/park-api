@@ -21,6 +21,8 @@ import br.com.cleilsonandrade.parkapi.web.dto.UserResponseDTO;
 import br.com.cleilsonandrade.parkapi.web.dto.mapper.UserMapper;
 import br.com.cleilsonandrade.parkapi.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -48,7 +50,9 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDTO(newUser));
   }
 
-  @Operation(summary = "Retrieve a user by ID", description = "Feature to retrieve a user by ID, restricted access to 'ADMIN' or 'CLIENT'", security = @SecurityRequirement(name = "security"), responses = {
+  @Operation(summary = "Retrieve a user by ID", description = "Feature to retrieve a user by ID, restricted access to 'ADMIN' or 'CLIENT'", security = @SecurityRequirement(name = "security"), parameters = {
+      @Parameter(in = ParameterIn.PATH, name = "id", description = "ID of the user to be retrieved in Integer format", required = true)
+  }, responses = {
       @ApiResponse(responseCode = "200", description = "Resource retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
       @ApiResponse(responseCode = "403", description = "User without permission to access this resource", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "404", description = "Resource not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
@@ -60,7 +64,9 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toDTO(user));
   }
 
-  @Operation(summary = "Update password", description = "Feature to update password, restricted access to 'ADMIN' or 'CLIENT'", security = @SecurityRequirement(name = "security"), responses = {
+  @Operation(summary = "Update password", description = "Feature to update password, restricted access to 'ADMIN' or 'CLIENT'", security = @SecurityRequirement(name = "security"), parameters = {
+      @Parameter(in = ParameterIn.PATH, name = "id", description = "ID of the user to be retrieved in Integer format", required = true)
+  }, responses = {
       @ApiResponse(responseCode = "204", description = "Password updated successfully"),
       @ApiResponse(responseCode = "400", description = "Password does not match", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
       @ApiResponse(responseCode = "403", description = "User without permission to access this resource", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),

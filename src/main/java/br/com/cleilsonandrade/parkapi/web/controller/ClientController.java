@@ -63,9 +63,11 @@ public class ClientController {
     return ResponseEntity.status(201).body(ClientMapper.toDto(client));
   }
 
-  @Operation(summary = "Localize client", description = "Feature to localize client, get by id"
+  @Operation(summary = "Localize client", description = "Feature to localize client, get by id. "
       +
-      "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", security = @SecurityRequirement(name = "security"), responses = {
+      "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", parameters = {
+          @Parameter(in = ParameterIn.PATH, name = "id", description = "ID of the user to be retrieved in Integer format", required = true)
+      }, security = @SecurityRequirement(name = "security"), responses = {
           @ApiResponse(responseCode = "200", description = "Resource localized successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientResponseDTO.class))),
           @ApiResponse(responseCode = "403", description = "Feature not allowed for profile CLIENT", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
           @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
