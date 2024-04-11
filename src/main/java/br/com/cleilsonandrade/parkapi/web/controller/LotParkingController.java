@@ -123,7 +123,7 @@ public class LotParkingController {
 	@Operation(summary = "Find client parking records by CPF", description = "Find client parking records by CPF"
 			+
 			"Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", security = @SecurityRequirement(name = "security"), parameters = {
-					@Parameter(in = ParameterIn.QUERY, name = "cpf", content = @Content(schema = @Schema(type = "integer", defaultValue = "0")), required = true, description = "'N' of the CPF for the client to be consulted"),
+					@Parameter(in = ParameterIn.PATH, name = "cpf", content = @Content(schema = @Schema(type = "integer", defaultValue = "0")), required = true, description = "'N' of the CPF for the client to be consulted"),
 					@Parameter(in = ParameterIn.QUERY, name = "page", content = @Content(schema = @Schema(type = "integer", defaultValue = "0")), description = "Represents page returned"),
 					@Parameter(in = ParameterIn.QUERY, name = "size", content = @Content(schema = @Schema(type = "integer", defaultValue = "20")), description = "Represents the total number of elements per page"),
 					@Parameter(in = ParameterIn.QUERY, name = "sort", hidden = true, array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "id,asc")), description = "Represents the ordering of results. Accepts multiple sorting criteria are supported"),
