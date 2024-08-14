@@ -57,12 +57,14 @@ public class ParkingController {
     return ResponseEntity.created(location).build();
   }
 
-  @Operation(summary = "Find a parking lot", description = "Resource to return a parking using the code"
-      + "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", security = @SecurityRequirement(name = "security"), responses = {
-          @ApiResponse(responseCode = "200", description = "The parking data is returned using its code", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParkingResponseDTO.class))),
-          @ApiResponse(responseCode = "404", description = "Parking not located", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-          @ApiResponse(responseCode = "403", description = "Resource not allowed for the profile 'CLIENT'", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-      })
+  @Operation(summary = "Find a parking lot", description = """
+      Resource to return a parking using the code\
+      Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'\
+      """, security = @SecurityRequirement(name = "security"), responses = {
+      @ApiResponse(responseCode = "200", description = "The parking data is returned using its code", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ParkingResponseDTO.class))),
+      @ApiResponse(responseCode = "404", description = "Parking not located", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      @ApiResponse(responseCode = "403", description = "Resource not allowed for the profile 'CLIENT'", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+  })
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ParkingResponseDTO> getByCode(@PathVariable String code) {

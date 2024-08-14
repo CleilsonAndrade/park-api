@@ -33,7 +33,7 @@ public class UserService {
   @Transactional(readOnly = true)
   public User getById(Long id) {
     return this.userRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(String.format("User id=%s not found", id)));
+        .orElseThrow(() -> new EntityNotFoundException("User id=%s not found".formatted(id)));
   }
 
   @Transactional
@@ -61,7 +61,7 @@ public class UserService {
   @Transactional(readOnly = true)
   public User searchByUsername(String username) {
     return userRepository.findByUsername(username)
-        .orElseThrow(() -> new EntityNotFoundException(String.format("User %s not found", username)));
+        .orElseThrow(() -> new EntityNotFoundException("User %s not found".formatted(username)));
   }
 
   @Transactional(readOnly = true)

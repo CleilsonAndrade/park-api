@@ -25,7 +25,7 @@ public class ClientParkingService {
   public ClientParking searchByReceipt(String receipt) {
     return repository.findByReceiptAndDateDepartureIsNull(receipt).orElseThrow(
         () -> new EntityNotFoundException(
-            String.format("Receipt '%s' not found in the system or checkout already carried out", receipt)));
+            "Receipt '%s' not found in the system or checkout already carried out".formatted(receipt)));
   }
 
   @Transactional(readOnly = true)

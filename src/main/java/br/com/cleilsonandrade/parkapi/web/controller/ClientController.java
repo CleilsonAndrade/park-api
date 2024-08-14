@@ -45,14 +45,15 @@ public class ClientController {
 
   private final UserService userService;
 
-  @Operation(summary = "Create a new client", description = "Feature to create a new client, linked to an already registered user"
-      +
-      "Request requires use of a 'Bearer token'. Restricted access to Role='CLIENT'", security = @SecurityRequirement(name = "security"), responses = {
-          @ApiResponse(responseCode = "201", description = "Resource created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientResponseDTO.class))),
-          @ApiResponse(responseCode = "403", description = "Feature not allowed for profile ADMIN", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-          @ApiResponse(responseCode = "409", description = "CPF client is already registered in the system", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-          @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-      })
+  @Operation(summary = "Create a new client", description = """
+      Feature to create a new client, linked to an already registered user\
+      Request requires use of a 'Bearer token'. Restricted access to Role='CLIENT'\
+      """, security = @SecurityRequirement(name = "security"), responses = {
+      @ApiResponse(responseCode = "201", description = "Resource created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientResponseDTO.class))),
+      @ApiResponse(responseCode = "403", description = "Feature not allowed for profile ADMIN", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      @ApiResponse(responseCode = "409", description = "CPF client is already registered in the system", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      @ApiResponse(responseCode = "422", description = "Resource not processed due to invalid input data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+  })
   @PostMapping
   @PreAuthorize("hasRole('CLIENT')")
   public ResponseEntity<ClientResponseDTO> create(@RequestBody @Valid ClientCreateDTO dto,
@@ -63,15 +64,16 @@ public class ClientController {
     return ResponseEntity.status(201).body(ClientMapper.toDto(client));
   }
 
-  @Operation(summary = "Localize client", description = "Feature to localize client, get by id. "
-      +
-      "Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'", parameters = {
-          @Parameter(in = ParameterIn.PATH, name = "id", description = "ID of the user to be retrieved in Integer format", required = true)
-      }, security = @SecurityRequirement(name = "security"), responses = {
-          @ApiResponse(responseCode = "200", description = "Resource localized successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientResponseDTO.class))),
-          @ApiResponse(responseCode = "403", description = "Feature not allowed for profile CLIENT", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-          @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-      })
+  @Operation(summary = "Localize client", description = """
+      Feature to localize client, get by id. \
+      Request requires use of a 'Bearer token'. Restricted access to Role='ADMIN'\
+      """, parameters = {
+      @Parameter(in = ParameterIn.PATH, name = "id", description = "ID of the user to be retrieved in Integer format", required = true)
+  }, security = @SecurityRequirement(name = "security"), responses = {
+      @ApiResponse(responseCode = "200", description = "Resource localized successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientResponseDTO.class))),
+      @ApiResponse(responseCode = "403", description = "Feature not allowed for profile CLIENT", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+      @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+  })
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ClientResponseDTO> getById(@PathVariable Long id) {

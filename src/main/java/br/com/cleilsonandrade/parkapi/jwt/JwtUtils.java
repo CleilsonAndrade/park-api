@@ -59,7 +59,7 @@ public class JwtUtils {
           .setSigningKey(generateKey()).build()
           .parseClaimsJws(refactorToken(token)).getBody();
     } catch (JwtException e) {
-      log.error(String.format("Token invalid %s", e.getMessage()));
+      log.error("Token invalid %s".formatted(e.getMessage()));
     }
 
     return null;
@@ -77,7 +77,7 @@ public class JwtUtils {
 
       return true;
     } catch (JwtException e) {
-      log.error(String.format("Token invalid %s", e.getMessage()));
+      log.error("Token invalid %s".formatted(e.getMessage()));
     }
 
     return false;
