@@ -1,6 +1,7 @@
 <div align="center">
   <h1>Park API</h1>
   <p>Sistema de gerenciamento de vagas de estacionamento. Possui recursos como autenticação de usuários, cadastrar e gerenciar informações de usuários, com perfis de cliente e administrador. Ele também permite consultas específicas, como listar usuários cadastrados, atualizar senhas, e realizar operações de check-in e check-out de veículos estacionados. Além disso, o sistema gera relatórios de estacionamentos. Desenvolvido com tecnologias como Java e o framework Spring, sendo sistema robusto, permitindo persistência em banco de dados MySQL, com cobertura de testes, autenticação usando o Spring Security e token JWT.</p>
+    <img src="./references/flow.png" alt="Logo" width="1800">
 </div>
 
 # 📒 Índice
